@@ -1,0 +1,120 @@
+{
+  "name": "@arraypress/marks-kit",
+  "version": "0.1.0",
+  "description": "Geometry, SVG reading, fitting, analysis and similarity for logomarks on a 512 grid: the kit the Logomarks set is drawn with (shapes, real booleans, strokes, tracks, iso solids, badges, letter skeletons), one SVG path parser, the 448 fit, speck and shape-tag analysis, outline signatures, and the industry-symbol parts.",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./geometry": {
+      "types": "./src/geometry/index.d.ts",
+      "import": "./src/geometry/index.js",
+      "default": "./src/geometry/index.js"
+    },
+    "./parts": {
+      "types": "./src/parts/index.d.ts",
+      "import": "./src/parts/index.js",
+      "default": "./src/parts/index.js"
+    },
+    "./svg": {
+      "types": "./src/svg/index.d.ts",
+      "import": "./src/svg/index.js",
+      "default": "./src/svg/index.js"
+    },
+    "./fit": {
+      "types": "./src/fit/index.d.ts",
+      "import": "./src/fit/index.js",
+      "default": "./src/fit/index.js"
+    },
+    "./raster": {
+      "types": "./src/raster/index.d.ts",
+      "import": "./src/raster/index.js",
+      "default": "./src/raster/index.js"
+    },
+    "./analyse": {
+      "types": "./src/analyse/index.d.ts",
+      "import": "./src/analyse/index.js",
+      "default": "./src/analyse/index.js"
+    },
+    "./similar": {
+      "types": "./src/similar/index.d.ts",
+      "import": "./src/similar/index.js",
+      "default": "./src/similar/index.js"
+    },
+    "./edit": {
+      "types": "./src/edit/index.d.ts",
+      "import": "./src/edit/index.js",
+      "default": "./src/edit/index.js"
+    },
+    "./edit/reshape": {
+      "types": "./src/edit/reshape.d.ts",
+      "import": "./src/edit/reshape.js",
+      "default": "./src/edit/reshape.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "marks-kit-skill": "bin/skill.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "logo",
+    "logomark",
+    "logomarks",
+    "geometry",
+    "svg",
+    "polygon",
+    "boolean",
+    "isometric",
+    "path",
+    "fit",
+    "similarity"
+  ],
+  "author": "David Sherlock",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arraypress/marks-kit.git"
+  },
+  "homepage": "https://github.com/arraypress/marks-kit#readme",
+  "bugs": "https://github.com/arraypress/marks-kit/issues",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "polygon-clipping": "^0.15.7"
+  },
+  "peerDependencies": {
+    "clipper-lib": "^6.4.2"
+  },
+  "peerDependenciesMeta": {
+    "clipper-lib": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "clipper-lib": "^6.4.2",
+    "typescript": "^6.0.3"
+  }
+}
