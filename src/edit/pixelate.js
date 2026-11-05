@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/marks-kit/edit/pixelate
+ * @module @logomarks/marks-kit/edit/pixelate
  *
  * Pixelate: the mark redrawn on a square grid, as clean pixel art.
  *

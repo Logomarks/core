@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/marks-kit/edit/adjust
+ * @module @logomarks/marks-kit/edit/adjust
  *
  * Simple adjustments to a mark, applied to the path data itself so every
  * download stays clean filled paths: rotate (in 90° steps, plus a fine tilt to any angle), flip, and put the

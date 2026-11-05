@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/marks-kit/raster/distance
+ * @module @logomarks/marks-kit/raster/distance
  *
  * The Euclidean distance transform (Felzenszwalb and Huttenlocher): for every
  * pixel of one kind, how far it is from the nearest pixel of the other. Half

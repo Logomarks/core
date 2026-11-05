@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/marks-kit/svg/shapes
+ * @module @logomarks/marks-kit/svg/shapes
  *
  * The filled shapes in a mark's file: every `<path>`, `<circle>`, `<ellipse>`,
  * `<rect>` and `<polygon>` as path data with its fill rule. Nested `<g>`

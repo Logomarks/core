@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/marks-kit/edit/reshape
+ * @module @logomarks/marks-kit/edit/reshape
  *
  * Weight and Soften: shape edits that change the mark's outline itself, so downloads stay clean filled paths.
  *

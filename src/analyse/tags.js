@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/marks-kit/analyse/tags
+ * @module @logomarks/marks-kit/analyse/tags
  *
  * Shape tags measured from a mark's coverage: wide or tall, round or square, solid or light, symmetric, radial.
  */

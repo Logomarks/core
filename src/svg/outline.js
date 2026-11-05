@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/marks-kit/svg/outline
+ * @module @logomarks/marks-kit/svg/outline
  *
  * A mark's real extent: every segment sampled finely (curves and arcs
  * included), never the viewBox or the control points. From `fit.mjs`.

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/marks-kit/similar
+ * @module @logomarks/marks-kit/similar
  *
  * What two marks are compared by, from their coverage (alpha 0–1, row by row, any renderer). The outline: the mark at
  * 48 px blurred 3×3, so a few pixels of shift or a thin gap don't hide a near-copy. The letter: a badge's knocked-out

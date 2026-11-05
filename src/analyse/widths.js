@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/marks-kit/analyse/widths
+ * @module @logomarks/marks-kit/analyse/widths
  *
  * A mark's gaps and strokes, measured on a raster as runs of even width (raster/channels.js) and grouped by width:
  * what tells a mark that keeps one gap from one that doesn't, and a feature too thin to survive 32 px.

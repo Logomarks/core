@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * marks-kit-skill <dir> [--url <url>]: writes the design skill's scripts/kit.mjs and scripts/fit.mjs into <dir>,
- * generated from @arraypress/marks-kit. `{{url}}` stays in their headers unless --url fills it.
+ * generated from @logomarks/marks-kit. `{{url}}` stays in their headers unless --url fills it.
  */
 import { writeSkillScripts } from '../src/skill/bundle.js';
 

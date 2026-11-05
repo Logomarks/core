@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/marks-kit/similar/nearest
+ * @module @logomarks/marks-kit/similar/nearest
  *
  * "More like this" for a whole set: each mark's nearest by plain overlap (IoU) of its coverage, nudged up for the
  * same style and for each shared mood.
