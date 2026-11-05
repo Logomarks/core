@@ -1,6 +1,6 @@
 # @logomarks/core
 
-Geometry, SVG reading, fitting, analysis and similarity for logomarks on a 512 grid. It is the kit the [Logomarks](https://logomarks.ai) set is drawn with: shapes and real booleans, strokes, tracks, iso solids, badges and letter skeletons; one SVG path parser; the 448 fit; speck, width and shape-tag analysis; outline and letter signatures; the studio's shape edits; and the parts the industry symbols are built from.
+Geometry, SVG reading, fitting, analysis and similarity for logomarks on a 512 grid: the kit the [Logomarks](https://logomarks.ai) set is drawn with.
 
 ## Install
 
@@ -9,7 +9,7 @@ npm install @logomarks/core
 npm install clipper-lib   # only for the shape edits (reshape)
 ```
 
-## Usage
+## Quick start
 
 ```js
 import { U, D, rect, circle, svg } from '@logomarks/core/geometry';
@@ -21,23 +21,27 @@ const { svg: mark } = fitMark(raw);   // 512 canvas, longest side 448, centred, 
 checkFit(mark).problems;              // []
 ```
 
-## API
+## What's in it
 
-| Subpath | Exports |
-|---|---|
-| `/geometry` | Booleans `U D I X`, `robust()`, `robustOps(rand)`; shapes `circle ellipse rect regular annulus sector arcBand bar ring roundPoly rr lens drop squircle pill egg`; transforms `rot move scale flipX rotN mapPts`; lines `stroke weave tracks trackLoop fillet filletClosed offsetPts walk balloon`; `grow soften grown over slices`; iso `iso cubes isoPrism isoBlock isoRing isoPile`; modular `segments segmentLines isoPieces blocks nest linkage`; badges `BADGE place knockout clearance PIX7 pixels checker dsegs`; letters `SKEL skelSolid`; `glitchMark deneedle seeded`; measures `area signedArea perimeter bbox ringBox winding`; output `toPath svg write` |
-| `/svg` | `parsePath` (absolute M L C Q A Z), `shapes` (filled elements), `bounds`, `outlinePoints`, `rings`, `filledShape`, `svgShape`, `pathRings`, `arcOf`, `bezierAt` |
-| `/fit` | `fitMark(svg)`, `checkFit(svg)`, `CANVAS`, `FIT` |
-| `/analyse` | `markParts` and `smallParts` (specks, slivers, pin-holes), `widths` (gaps and strokes), `shapeTags` |
-| `/similar` | `outlineSignature`, `letterSignatures`, `variants`, `iou`, `nearestAll` (from coverage arrays: bring any renderer) |
-| `/raster` | `frameOf`, `fill` (scanline), `components`, `distance`, `channels` |
-| `/edit` | `reshape` (weight, soften, gap, detail), `pieceCount`, `smallSizeInfo`, `adjustPaths`, `transformPath`, `pixelGrid`, `pixelPath` |
-| `/parts` | The industry-symbol parts: `exact`, `turn`, `sized`, `chain`, `badge`, `spline`, `duoLine`, `tiles`, `scene`, `letterSolid`, `shearOf`, `rocket`, `facetHead`, `runIndustry` … (Node) |
+- `/geometry`: shapes and real booleans, strokes, tracks, iso solids, badges and letter skeletons
+- `/svg`: one SVG path parser, filled shapes, bounds and rings
+- `/fit`: the 448 fit and its check
+- `/analyse`: specks, slivers and pin-holes, gap and stroke widths, shape tags
+- `/similar`: outline and letter signatures, IoU and nearest marks
+- `/raster`: scanline fill, components, distance transform
+- `/edit`: the studio's shape edits (weight, soften, gap, detail) and pixelate
+- `/parts`: the parts the industry symbols are built from (Node)
+- `logomarks-skill <dir>`: writes the design skill's `kit.mjs` and `fit.mjs`
 
-`logomarks-skill <dir>` writes the design skill's single-file `kit.mjs` (needs only polygon-clipping) and `fit.mjs` (no dependencies), with `{{url}}` in their headers.
+Every export, repeatable drawings and the skill scripts: [API](https://github.com/Logomarks/core/blob/main/docs/api.md).
 
-Drawings repeat byte for byte: call `robust()` once, and set `Math.random = seeded(name)` before each mark.
+## Links
 
-## License
+- [Docs](https://github.com/Logomarks/core/tree/main/docs)
+- [Changelog](https://github.com/Logomarks/core/blob/main/CHANGELOG.md)
+- [Licence](https://github.com/Logomarks/core/blob/main/LICENSE)
+- [GitHub](https://github.com/Logomarks/core)
 
-MIT © ArrayPress Limited
+## Licence
+
+MIT © ArrayPress Limited; author David Sherlock.
