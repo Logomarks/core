@@ -1,5 +1,5 @@
 /**
- * @module @logomarks/marks-kit/edit/reshape
+ * @module @logomarks/core/edit/reshape
  *
  * Weight and Soften: shape edits that change the mark's outline itself, so downloads stay clean filled paths.
  *

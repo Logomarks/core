@@ -1,5 +1,5 @@
 /**
- * @module @logomarks/marks-kit/analyse/specks
+ * @module @logomarks/core/analyse/specks
  *
  * A mark's pieces and holes, to find the stray specks, slivers and pin-holes a boolean leaves behind. Read as vectors
  * (every outline unioned with its fill rule, booleans retried with a jitter seeded by the mark's name, so a read

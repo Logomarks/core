@@ -9,7 +9,7 @@ import * as geometry from '../src/geometry/index.js';
 import { fitMark } from '../src/fit/index.js';
 import { fixture } from './helpers.js';
 
-const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'marks-kit-skill-'));
+const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'logomarks-skill-'));
 const nm = path.join(dir, 'node_modules');
 fs.symlinkSync(new URL('../node_modules', import.meta.url).pathname, nm);
 

@@ -1,5 +1,5 @@
 /**
- * @module @logomarks/marks-kit/svg/rings
+ * @module @logomarks/core/svg/rings
  *
  * Path segments as closed polygons (rings), curves sampled every `step`
  * units: the input to the booleans and the scanline raster. From the kit's

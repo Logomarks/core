@@ -1,5 +1,5 @@
 /**
- * @module @logomarks/marks-kit/raster/channels
+ * @module @logomarks/core/raster/channels
  *
  * Runs of even width: the strokes of the ink, or the gaps in the empty
  * space. Along the middle of a stroke (the ridge of its distance transform)

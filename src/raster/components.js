@@ -1,5 +1,5 @@
 /**
- * @module @logomarks/marks-kit/raster/components
+ * @module @logomarks/core/raster/components
  *
  * The connected parts of a binary raster: ink as 8-connected pieces, empty
  * space as 4-connected regions (holes are those not touching the border).

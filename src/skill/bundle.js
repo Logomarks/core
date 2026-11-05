@@ -1,5 +1,5 @@
 /**
- * @module @logomarks/marks-kit/skill
+ * @module @logomarks/core/skill
  *
  * The design skill's two scripts, generated from the library so they never drift: `kit.mjs` (the geometry kit as one
  * file, needing only polygon-clipping) and `fit.mjs` (the fit and check, no dependencies). Each module's code goes in
@@ -31,7 +31,7 @@ const KIT_HEADER = `// Logomarks geometry kit — the helpers the Logomarks set 
 // standard (longest side 448, centred) afterwards.
 //
 // Needs one package: npm install polygon-clipping
-// Generated from @logomarks/marks-kit (its geometry) by marks-kit-skill: edit the library, not this file.
+// Generated from @logomarks/core (its geometry) by logomarks-skill: edit the library, not this file.
 import pc from 'polygon-clipping';
 `;
 
@@ -48,7 +48,7 @@ const FIT_HEADER = `#!/usr/bin/env node
 // Reads <path d> (with fill-rule), <circle>, <ellipse>, <rect> and <polygon>; nested
 // <g> transforms are NOT applied, so flatten those first. Measures the real outline,
 // curves and arcs included (sampled), never the viewBox.
-// Generated from @logomarks/marks-kit (its svg and fit) by marks-kit-skill: edit the library, not this file.
+// Generated from @logomarks/core (its svg and fit) by logomarks-skill: edit the library, not this file.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -135,7 +135,7 @@ function join(files, keep) {
 }
 
 /**
- * The skill's `kit.mjs`: the geometry kit as one file (every export of `@logomarks/marks-kit/geometry`).
+ * The skill's `kit.mjs`: the geometry kit as one file (every export of `@logomarks/core/geometry`).
  *
  * @returns {string} The script, `{{url}}` unfilled.
  */

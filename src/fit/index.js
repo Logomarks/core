@@ -1,5 +1,5 @@
 /**
- * @module @logomarks/marks-kit/fit
+ * @module @logomarks/core/fit
  *
  * The Logomarks standard: a 512 canvas, the mark's longest side exactly 448 measured on the real outline (curves and
  * arcs sampled, never the viewBox), centred, filled paths in `currentColor`, coordinates on the 0.1 grid. fitMark()

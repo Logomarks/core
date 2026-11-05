@@ -1,5 +1,5 @@
 /**
- * @module @logomarks/marks-kit/raster/scanline
+ * @module @logomarks/core/raster/scanline
  *
  * A binary raster of a mark, filled by scanline at pixel centres: every path
  * with its own fill rule, the paths OR-ed. It needs nothing but the rings, so

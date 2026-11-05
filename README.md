@@ -1,19 +1,19 @@
-# @logomarks/marks-kit
+# @logomarks/core
 
 Geometry, SVG reading, fitting, analysis and similarity for logomarks on a 512 grid. It is the kit the [Logomarks](https://logomarks.ai) set is drawn with: shapes and real booleans, strokes, tracks, iso solids, badges and letter skeletons; one SVG path parser; the 448 fit; speck, width and shape-tag analysis; outline and letter signatures; the studio's shape edits; and the parts the industry symbols are built from.
 
 ## Install
 
 ```bash
-npm install @logomarks/marks-kit
+npm install @logomarks/core
 npm install clipper-lib   # only for the shape edits (reshape)
 ```
 
 ## Usage
 
 ```js
-import { U, D, rect, circle, svg } from '@logomarks/marks-kit/geometry';
-import { fitMark, checkFit } from '@logomarks/marks-kit/fit';
+import { U, D, rect, circle, svg } from '@logomarks/core/geometry';
+import { fitMark, checkFit } from '@logomarks/core/fit';
 
 // Moonrise: a block with a half-moon bitten out of the top, a sun left floating in the bite.
 const raw = svg(U(D(rect(0, 0, 300, 300), circle(150, 0, 120)), circle(150, 30, 46)));
@@ -34,7 +34,7 @@ checkFit(mark).problems;              // []
 | `/edit` | `reshape` (weight, soften, gap, detail), `pieceCount`, `smallSizeInfo`, `adjustPaths`, `transformPath`, `pixelGrid`, `pixelPath` |
 | `/parts` | The industry-symbol parts: `exact`, `turn`, `sized`, `chain`, `badge`, `spline`, `duoLine`, `tiles`, `scene`, `letterSolid`, `shearOf`, `rocket`, `facetHead`, `runIndustry` … (Node) |
 
-`marks-kit-skill <dir>` writes the design skill's single-file `kit.mjs` (needs only polygon-clipping) and `fit.mjs` (no dependencies), with `{{url}}` in their headers.
+`logomarks-skill <dir>` writes the design skill's single-file `kit.mjs` (needs only polygon-clipping) and `fit.mjs` (no dependencies), with `{{url}}` in their headers.
 
 Drawings repeat byte for byte: call `robust()` once, and set `Math.random = seeded(name)` before each mark.
 

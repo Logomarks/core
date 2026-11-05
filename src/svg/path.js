@@ -1,5 +1,5 @@
 /**
- * @module @logomarks/marks-kit/svg/path
+ * @module @logomarks/core/svg/path
  *
  * SVG path data to absolute segments (`M`, `L`, `C`, `Q`, `A`, `Z`), and the
  * curve maths shared by every reader: a point on a Bézier, and an arc in
