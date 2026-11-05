@@ -90,10 +90,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arraypress/marks-kit.git"
+    "url": "git+https://github.com/Logomarks/marks-kit.git"
   },
-  "homepage": "https://github.com/arraypress/marks-kit#readme",
-  "bugs": "https://github.com/arraypress/marks-kit/issues",
+  "homepage": "https://github.com/Logomarks/marks-kit#readme",
+  "bugs": "https://github.com/Logomarks/marks-kit/issues",
   "engines": {
     "node": ">=20.0.0"
   },
