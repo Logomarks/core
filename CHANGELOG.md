@@ -5,6 +5,12 @@ All notable changes to `@logomarks/core` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] — 2026-11-06
+
+### Fixed
+
+- `letterSignatures()` counts a pixel as ink only above half coverage (8-bit alpha 128 and up, as `holecheck.mjs` did): with Float32 coverage, an alpha of 127 rounded past `127 / 255` and counted, which moved letter scores by about a hundredth and could reorder near matches.
+
 ## [0.1.2] — 2026-11-06
 
 ### Changed

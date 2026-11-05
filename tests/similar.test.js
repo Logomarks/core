@@ -30,6 +30,13 @@ test('signatures: the outline is blurred, a solid has no holes, a ring has one',
 	assert.equal(ink.length, LETTER.size ** 2);
 });
 
+test('letterSignatures(): ink is alpha 128 and up, in Float32 coverage too (127 is not)', () => {
+	const R = 8, N = 8, at = (v) => { const a = new Float32Array(R * R); for (let i = 0; i < R * R; i++) a[i] = (i % R) < 4 ? v / 255 : 0; return a; };
+	assert.equal(letterSignatures(at(127), R, N).ink.some((v) => v > 0), false);
+	assert.equal(letterSignatures(at(128), R, N).ink.some((v) => v > 0), true);
+	assert.deepEqual(letterSignatures(at(127), R, N).ink, letterSignatures(Float64Array.from(at(127)), R, N).ink);
+});
+
 test('nearestAll(): closest by overlap, nudged by style and mood', () => {
 	const a = alpha(16, (x) => x < 0.5), b = alpha(16, (x) => x < 0.45), c = alpha(16, (x) => x > 0.5);
 	const out = nearestAll([{ slug: 'a', alpha: a }, { slug: 'b', alpha: b }, { slug: 'c', alpha: c, style: 'x' }], { top: 2 });

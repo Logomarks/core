@@ -96,7 +96,8 @@ function cropped(a, R, N) {
 
 /**
  * A mark's letter signatures from its coverage at LETTER.render: its holes (null when it has none) and its ink, each
- * cropped to its box at LETTER.size.
+ * cropped to its box at LETTER.size. A pixel is ink when it is more than half covered (8-bit alpha 128 and up, as
+ * holecheck read it), whether the coverage is a Float32Array or a Float64Array.
  *
  * @param {Float32Array} alpha Coverage 0–1, `render` × `render`.
  * @param {number} [R] Its side (128).
@@ -105,7 +106,8 @@ function cropped(a, R, N) {
  */
 export function letterSignatures(alpha, R = LETTER.render, N = LETTER.size) {
 	const ink = new Uint8Array(R * R);
-	for (let i = 0; i < ink.length; i++) ink[i] = alpha[i] > 127 / 255 ? 1 : 0;
+	// > 0.5, not > 127 / 255: an alpha of 127 stored as Float32 rounds up past the double 127 / 255 and would count as ink
+	for (let i = 0; i < ink.length; i++) ink[i] = alpha[i] > 0.5 ? 1 : 0;
 	const holes = cropped(holesOf(ink, R), R, N);
 	return { holes: holes.some((v) => v > 0) ? holes : null, ink: cropped(ink, R, N) };
 }
