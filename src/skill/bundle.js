@@ -15,7 +15,7 @@ const SRC = new URL('../', import.meta.url);
 /** The geometry kit's modules, in dependency order. */
 const KIT = ['geometry/core.js', 'geometry/booleans.js', 'geometry/polygon.js', 'geometry/random.js', 'geometry/shapes.js', 'geometry/stroke.js',
 	'geometry/path.js', 'geometry/offset.js', 'geometry/iso.js', 'geometry/modular.js', 'geometry/badges.js', 'geometry/letters.js',
-	'svg/path.js', 'svg/shapes.js', 'svg/rings.js', 'svg/shape.js', 'geometry/glitch.js', 'geometry/needle.js'];
+	'svg/path.js', 'svg/shapes.js', 'svg/rings.js', 'svg/nonzero.js', 'svg/shape.js', 'geometry/glitch.js', 'geometry/needle.js'];
 
 /** The fit's modules, in dependency order. */
 const FIT = ['svg/path.js', 'svg/shapes.js', 'svg/outline.js', 'util/number.js', 'fit/index.js'];

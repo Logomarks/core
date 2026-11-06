@@ -1,6 +1,6 @@
 // Type-level usage check (`npm run typecheck`); never executed.
-import { U, D, circle, rect, svg, robust, seeded, over, skelSolid, knockout, glitchMark, iso, isoBlock, isoPile, type Shape, type Point } from '../src/geometry/index.js';
-import { parsePath, shapes, svgShape, bounds, type FilledPath, type Segment } from '../src/svg/index.js';
+import { U, D, circle, rect, svg, robust, seeded, over, skelSolid, knockout, glitchMark, iso, isoBlock, isoPile, OPS, type Shape, type Point } from '../src/geometry/index.js';
+import { parsePath, shapes, svgShape, bounds, pathRings, nonzeroFill, windingFill, ringsMeet, type FilledPath, type Segment } from '../src/svg/index.js';
 import { fitMark, checkFit, type Fitted } from '../src/fit/index.js';
 import { markParts, smallParts, shapeTags, widths, type ShapeTag } from '../src/analyse/index.js';
 import { outlineSignature, variants, iou, nearestAll } from '../src/similar/index.js';
@@ -37,3 +37,6 @@ const M: Record<string, IndustryMark> = { Plate: { trade: 'Test', style: 'Bold',
 if (process.argv[9]) runIndustry(999, M);
 const bm = fill([{ rings: [[[0, 0], [10, 0], [10, 10]]], evenodd: false }], frameOf([{ rings: [[[0, 0], [10, 0], [10, 10]]], evenodd: false }], 2));
 console.log(p, badged, glitched, stack, segs, problems, read, smallParts(read.parts), tags, best, near, out, bold, d, exactShape, components(bm), widths(paths), svgShape(file), bounds(paths), bundleKit().length);
+const glyphRings = pathRings('M0 0H100V100H0ZM-50 40H150V60H-50Z');
+const glyph: Shape = ringsMeet(glyphRings) ? windingFill(glyphRings, OPS) : nonzeroFill(glyphRings, OPS);
+console.log(glyph);

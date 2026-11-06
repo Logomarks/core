@@ -5,7 +5,7 @@ Every subpath is also re-exported from the root (`@logomarks/core`), except `/pa
 | Subpath | Exports |
 |---|---|
 | `/geometry` | Booleans `U D I X`, `robust()`, `robustOps(rand)`; shapes `circle ellipse rect regular annulus sector arcBand bar ring roundPoly rr lens drop squircle pill egg`; transforms `rot move scale flipX rotN mapPts`; lines `stroke weave tracks trackLoop fillet filletClosed offsetPts walk balloon`; `grow soften grown over slices`; iso `iso cubes isoPrism isoBlock isoRing isoPile`; modular `segments segmentLines isoPieces blocks nest linkage`; badges `BADGE place knockout clearance PIX7 pixels checker dsegs`; letters `SKEL skelSolid`; `glitchMark deneedle seeded`; measures `area signedArea perimeter bbox ringBox winding`; output `toPath svg write` |
-| `/svg` | `parsePath` (absolute M L C Q A Z), `shapes` (filled elements), `bounds`, `outlinePoints`, `rings`, `filledShape`, `svgShape`, `pathRings`, `arcOf`, `bezierAt` |
+| `/svg` | `parsePath` (absolute M L C Q A Z), `shapes` (filled elements), `bounds`, `outlinePoints`, `rings`, `filledShape`, `svgShape`, `pathRings`, `nonzeroFill` (exact non-zero fill from rings, overlaps included), `windingFill`, `ringsMeet`, `arcOf`, `bezierAt` |
 | `/fit` | `fitMark(svg)`, `checkFit(svg)`, `CANVAS`, `FIT` |
 | `/analyse` | `markParts` and `smallParts` (specks, slivers, pin-holes), `widths` (gaps and strokes), `shapeTags` |
 | `/similar` | `outlineSignature`, `letterSignatures`, `variants`, `iou`, `nearestAll` (from coverage arrays: bring any renderer) |

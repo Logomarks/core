@@ -6,3 +6,4 @@ export { attr, shapes, viewBox, body } from './shapes.js';
 export { outlinePoints, bounds } from './outline.js';
 export { rings } from './rings.js';
 export { filledShape, svgShape, pathRings } from './shape.js';
+export { nonzeroFill, windingFill, ringsMeet } from './nonzero.js';

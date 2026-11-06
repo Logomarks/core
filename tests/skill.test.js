@@ -7,6 +7,7 @@ import { execFileSync } from 'node:child_process';
 import { bundleKit, bundleFit, writeSkillScripts } from '../src/skill/bundle.js';
 import * as geometry from '../src/geometry/index.js';
 import { fitMark } from '../src/fit/index.js';
+import { svgShape } from '../src/svg/index.js';
 import { fixture } from './helpers.js';
 
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'logomarks-skill-'));
@@ -22,6 +23,9 @@ test('the bundled kit has the {{url}} header and every geometry export, and draw
 	assert.deepEqual(Object.keys(bundled).sort(), Object.keys(geometry).sort());
 	const draw = (k) => k.svg(k.over(k.circle(256, 256, 200), k.skelSolid('K', 260, 64)));
 	assert.equal(draw(bundled), draw(geometry));
+	// svgShape reads non-zero overlaps the library's way (svg/nonzero.js goes in ahead of svg/shape.js)
+	const overlap = '<svg><path d="M0 0H100V100H0ZM-50 40H150V60H-50Z"/></svg>';
+	assert.deepEqual(bundled.svgShape(overlap), svgShape(overlap));
 	assert.match(fs.readFileSync(path.join(dir, 'kit.mjs'), 'utf8'), /\/\/ https:\/\/example\.com · CC0/);
 });
 

@@ -5,6 +5,16 @@ All notable changes to `@logomarks/core` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.6] — 2026-11-07
+
+### Fixed
+
+- `filledShape()` and `svgShape()` read non-zero outlines whose subpaths overlap (font glyph outlines, as Bodoni Moda and DM Serif Display draw them) correctly. Each ring's winding was judged beside its longest edge, so an outer whose longest edge lay inside another contour was dropped and whole strokes vanished. When any two rings cross or touch, the fill now comes from the rings' summed winding (`windingFill`, exact however they overlap; opposite windings cancel, as a browser draws them); where the old reading already covered the same ground its polygons are kept. Every one of the 3,967 Logomarks SVGs (392 non-zero outlines among them) reads to identical polygons as in 0.1.5. Even-odd outlines are unchanged. The skill's generated `kit.mjs` carries the same reading.
+
+### Added
+
+- `nonzeroFill(rings, ops)`, `windingFill(rings, ops)` and `ringsMeet(rings)` in `/svg`: non-zero fill straight from rings, for glyph outlines and other non-zero path data.
+
 ## [0.1.5] — 2026-11-06
 
 ### Added

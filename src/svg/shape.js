@@ -1,10 +1,11 @@
 /**
  * A mark read back in as a shape: every filled outline unioned, each with its own fill rule. Even-odd outlines
- * exclude every ring; non-zero ones test the winding just either side of each ring's edge, so reversed holes, islands
- * and same-way overlaps all come out right.
+ * exclude every ring; non-zero ones sum the rings' windings (nonzero.js), so reversed holes, islands, same-way
+ * overlaps and overlapping subpaths (font glyphs) all come out right.
  */
 import { OPS } from '../geometry/booleans.js';
-import { signedArea, winding } from '../geometry/polygon.js';
+import { signedArea } from '../geometry/polygon.js';
+import { nonzeroFill } from './nonzero.js';
 import { rings } from './rings.js';
 import { parsePath } from './path.js';
 import { shapes } from './shapes.js';
@@ -17,32 +18,7 @@ import { shapes } from './shapes.js';
  * @param {import('../geometry/booleans.js').BooleanOps} b The booleans.
  * @returns {import('../geometry/types.js').Shape} The filled shape.
  */
-function fillOf(rs, evenodd, b) {
-	if (evenodd) return b.xor(...rs.map((r) => [r]));
-	const sorted = rs.slice().sort((p, q) => Math.abs(signedArea(q)) - Math.abs(signedArea(p)));
-	const total = (/** @type {import('../geometry/types.js').Point} */ pt) => rs.reduce((s, r) => s + winding(r, pt), 0);
-	/** @type {import('../geometry/types.js').Shape} */
-	let g = [];
-	for (const r of sorted) {
-		let k = 0, longest = 0;
-		r.forEach((p, i) => {
-			const q = r[(i + 1) % r.length], L = Math.hypot(q[0] - p[0], q[1] - p[1]);
-			if (L > longest) { k = i; longest = L; }
-		});
-		const p = r[k], q = r[(k + 1) % r.length], e = 0.05;
-		const nx = ((q[1] - p[1]) / longest) * e, ny = ((q[0] - p[0]) / longest) * e;
-		const m = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
-		/** @type {import('../geometry/types.js').Point} */
-		const a = [m[0] - nx, m[1] + ny];
-		/** @type {import('../geometry/types.js').Point} */
-		const c = [m[0] + nx, m[1] - ny];
-		const [inside, outside] = winding(r, a) ? [a, c] : [c, a];
-		const fi = total(inside) !== 0, fo = total(outside) !== 0;
-		if (fi && !fo) g = b.union(g, [r]);
-		else if (!fi && fo) g = b.difference(g, [r]);
-	}
-	return g;
-}
+const fillOf = (rs, evenodd, b) => (evenodd ? b.xor(...rs.map((r) => [r])) : nonzeroFill(rs, b));
 
 /**
  * Outlines (parsed path data with their fill rules) as one shape.
