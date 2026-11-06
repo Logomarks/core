@@ -11,7 +11,12 @@
  *   alone (a thin line or a small dot would vanish) or when it bridges two filled cells across it (a diagonal would
  *   break into steps that don't touch).
  * - Filled cells are merged into as few rectangles as possible, so the SVG stays small and clean.
+ *
+ * Where there's no canvas to measure with (a server, a Worker), `pixelCoverage` measures the cells from the mark's
+ * rings by scanline; `pixelCells` gives the filled cells themselves, for drawing them one by one (a mosaic).
  */
+import { fill } from '../raster/scanline.js';
+
 /** Samples a cell is measured at, along each side (6 × 6 a cell). */
 export const SS = 6;
 
@@ -32,20 +37,38 @@ export function pixelGrid(amount, box) {
 }
 
 /**
- * The pixelated mark as one path's d, from how much of each cell the mark covers: cells covered half or more are
- * filled, cells covered a fifth or more too when they stand alone or bridge two filled cells, then merged into as few
- * rectangles as possible. Null when nothing is filled.
+ * How much of each cell the mark covers, measured from its rings by scanline at `SS` × `SS` samples a cell: what a
+ * canvas would measure, without one.
+ *
+ * @param {readonly import('../raster/scanline.js').FillPath[]} paths The mark's paths (rings and fill rules).
+ * @param {import('./index.js').PixelGrid} grid The grid.
+ * @returns {Float32Array} Coverage 0–1 per cell, row by row.
+ */
+export function pixelCoverage(paths, { cols, rows, cell, x0, y0 }) {
+	const bmp = fill(paths, { x0, y0, scale: SS / cell, width: cols * SS, height: rows * SS });
+	const cov = new Float32Array(cols * rows);
+	for (let j = 0; j < bmp.height; j++)
+		for (let i = 0; i < bmp.width; i++)
+			if (bmp.data[j * bmp.width + i])
+				cov[Math.floor(j / SS) * cols + Math.floor(i / SS)]++;
+	for (let k = 0; k < cov.length; k++)
+		cov[k] /= SS * SS;
+	return cov;
+}
+
+/**
+ * The filled cells, from how much of each the mark covers: half or more, or a fifth or more where a cell stands alone
+ * (a thin line or a small dot would vanish) or bridges two filled cells across it (a diagonal would break).
  *
  * @param {ArrayLike<number>} cov Coverage 0–1 per cell, row by row.
  * @param {import('./index.js').PixelGrid} grid The grid.
- * @returns {string | null} The path data.
+ * @returns {Uint8Array} 1 per filled cell, row by row.
  */
-export function pixelPath(cov, { cols, rows, cell, x0, y0 }) {
+export function pixelCells(cov, { cols, rows }) {
 	const at = (m, q, r) => (q >= 0 && r >= 0 && q < cols && r < rows ? m[r * cols + q] : 0);
 	const on = new Uint8Array(cols * rows);
 	for (let i = 0; i < on.length; i++)
 		on[i] = cov[i] >= 0.5 ? 1 : 0;
-	// keep thin lines and small dots, and bridge diagonals
 	const keep = on.slice();
 	for (let r = 0; r < rows; r++)
 		for (let q = 0; q < cols; q++) {
@@ -64,6 +87,20 @@ export function pixelPath(cov, { cols, rows, cell, x0, y0 }) {
 			if (!near || (bridges && cov[i] >= 0.3))
 				keep[i] = 1;
 		}
+	return keep;
+}
+
+/**
+ * The pixelated mark as one path's d, from how much of each cell the mark covers: cells covered half or more are
+ * filled, cells covered a fifth or more too when they stand alone or bridge two filled cells, then merged into as few
+ * rectangles as possible. Null when nothing is filled.
+ *
+ * @param {ArrayLike<number>} cov Coverage 0–1 per cell, row by row.
+ * @param {import('./index.js').PixelGrid} grid The grid.
+ * @returns {string | null} The path data.
+ */
+export function pixelPath(cov, { cols, rows, cell, x0, y0 }) {
+	const keep = pixelCells(cov, { cols, rows });
 	const done = [];
 	let open = new Map();
 	for (let r = 0; r <= rows; r++) {

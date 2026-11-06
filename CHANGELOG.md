@@ -5,6 +5,12 @@ All notable changes to `@logomarks/core` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] — 2026-11-06
+
+### Added
+
+- `pixelCoverage(paths, grid)` measures how much of each pixel cell a mark covers from its rings, by scanline, so pixelate runs without a canvas (a server, a Worker); `pixelCells(cov, grid)` returns the filled cells themselves, for drawing them one by one (`@arraypress/covers` uses both for its pixel mosaic). `pixelPath` is unchanged.
+
 ## [0.1.4] — 2026-11-06
 
 ### Fixed

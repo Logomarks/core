@@ -4,4 +4,4 @@
  */
 export { loadShaper, shaperReady, hasCorners, reshape, pieceCount, shapeInfo, smallSizeInfo } from './reshape.js';
 export { NO_ADJUST, isAdjusted, adjustSuffix, transformPath, adjustPaths } from './adjust.js';
-export { SS, pixelGrid, pixelPath } from './pixelate.js';
+export { SS, pixelGrid, pixelPath, pixelCells, pixelCoverage } from './pixelate.js';

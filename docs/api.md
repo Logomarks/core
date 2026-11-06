@@ -10,7 +10,7 @@ Every subpath is also re-exported from the root (`@logomarks/core`), except `/pa
 | `/analyse` | `markParts` and `smallParts` (specks, slivers, pin-holes), `widths` (gaps and strokes), `shapeTags` |
 | `/similar` | `outlineSignature`, `letterSignatures`, `variants`, `iou`, `nearestAll` (from coverage arrays: bring any renderer) |
 | `/raster` | `frameOf`, `fill` (scanline), `components`, `distance`, `channels` |
-| `/edit` | `reshape` (weight, soften, gap, detail), `pieceCount`, `smallSizeInfo`, `adjustPaths`, `transformPath`, `pixelGrid`, `pixelPath` |
+| `/edit` | `reshape` (weight, soften, gap, detail), `pieceCount`, `smallSizeInfo`, `adjustPaths`, `transformPath`, `pixelGrid`, `pixelPath`, `pixelCells`, `pixelCoverage` |
 | `/parts` | The industry-symbol parts: `exact`, `turn`, `sized`, `chain`, `badge`, `spline`, `duoLine`, `tiles`, `scene`, `letterSolid`, `shearOf`, `rocket`, `facetHead`, `runIndustry` … (Node) |
 
 The shape edits in `/edit` load [clipper-lib](https://www.npmjs.com/package/clipper-lib), an optional peer, the first time they are needed.
