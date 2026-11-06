@@ -1,5 +1,5 @@
 // Type-level usage check (`npm run typecheck`); never executed.
-import { U, D, circle, rect, svg, robust, seeded, over, skelSolid, knockout, glitchMark, iso, isoBlock, isoPile, OPS, type Shape, type Point } from '../src/geometry/index.js';
+import { U, D, circle, rect, svg, robust, seeded, over, skelSolid, knockout, glitchMark, iso, isoBlock, isoPile, OPS, openRing, closeRing, deneedle, toPath, type Shape, type Point } from '../src/geometry/index.js';
 import { parsePath, shapes, svgShape, bounds, pathRings, nonzeroFill, windingFill, ringsMeet, type FilledPath, type Segment } from '../src/svg/index.js';
 import { fitMark, checkFit, type Fitted } from '../src/fit/index.js';
 import { markParts, smallParts, shapeTags, widths, type ShapeTag } from '../src/analyse/index.js';
@@ -40,3 +40,6 @@ console.log(p, badged, glitched, stack, segs, problems, read, smallParts(read.pa
 const glyphRings = pathRings('M0 0H100V100H0ZM-50 40H150V60H-50Z');
 const glyph: Shape = ringsMeet(glyphRings) ? windingFill(glyphRings, OPS) : nonzeroFill(glyphRings, OPS);
 console.log(glyph);
+const openR: Point[] = openRing(closeRing(rect(0, 0, 10, 20)[0]), 1e-6);
+const trimmed: Shape = deneedle([[openR]], { deg: 12 });
+console.log(toPath(trimmed));

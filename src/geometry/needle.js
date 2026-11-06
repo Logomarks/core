@@ -2,6 +2,7 @@
  * Needle trimming for iso solids: where a round-ended gap meets a silhouette corner at a shallow angle, the face runs on
  * past the gap's end as a sliver about 1 wide; deneedle() cuts it off so the face ends square on the gap.
  */
+import { openRing } from './polygon.js';
 
 /** Where line a–b meets line c–d. */
 const meet = (a, b, c, d) => { const r = [b[0] - a[0], b[1] - a[1]], s = [d[0] - c[0], d[1] - c[1]], den = r[0] * s[1] - r[1] * s[0];
@@ -9,9 +10,9 @@ const meet = (a, b, c, d) => { const r = [b[0] - a[0], b[1] - a[1]], s = [d[0] -
 /** Cuts the needles off a shape. A needle is a corner sharper than `deg` with one edge shorter than `len`: where a round-ended
     gap meets a silhouette corner at a shallow angle (the hex solids' 60° corners), the face runs on past the gap's end as a
     sliver about 1 wide. The tip and the short edge's far end become one point, where the long edge into the tip meets the
-    edge out of the short one, so the face ends square on the gap. */
+    edge out of the short one, so the face ends square on the gap. Rings may come open or closed; they go back closed. */
 export const deneedle = (shape, { deg = 12, len = 16 } = {}) => shape.map((pg) => pg.map((ring) => {
-  const q = ring.slice(0, -1), d = (u, v) => Math.hypot(u[0] - v[0], u[1] - v[1]);
+  const q = openRing(ring).slice(), d = (u, v) => Math.hypot(u[0] - v[0], u[1] - v[1]);
   for (let i = 0; i < q.length && q.length > 4; i++) { const n = q.length, w = (k) => q[(k + n) % n], v = q[i], a = w(i - 1), b = w(i + 1);
     const ang = Math.abs(Math.atan2((a[0] - v[0]) * (b[1] - v[1]) - (a[1] - v[1]) * (b[0] - v[0]), (a[0] - v[0]) * (b[0] - v[0]) + (a[1] - v[1]) * (b[1] - v[1])));
     if (ang * 180 / Math.PI >= deg) continue;

@@ -5,6 +5,16 @@ All notable changes to `@logomarks/core` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.7] — 2026-11-07
+
+### Fixed
+
+- `toPath()` and `deneedle()` keep every corner of an open ring. Both sliced the last point off each ring on the assumption it repeated the first, which holds for the booleans' rings (`U`, `D`, `I`, `grow`, `lens`, `drop`) but not the builders' (`poly`, `rect`, `circle`, `ellipse`, `rr`, `roundPoly`, `splineClosed`), so a hand-built `toPath([rect(…)])` lost a corner and `deneedle()` on an open ring lost one before trimming. They now drop the last point only when it lies within 1e-6 of the first. Every one of the 3,967 Logomarks SVGs round-trips (`svgShape` then `toPath`, `deneedle` and a sample through `grow`) to byte-identical path data as in 0.1.6, and 14 of the site's generator batches (247 marks) write identical files.
+
+### Added
+
+- `openRing(ring, eps = 1e-6)` and `closeRing(ring, eps = 1e-6)` in `/geometry`: a ring without or with its closing point, whichever way it came in. `grow()`'s ring reading uses `openRing` too (with an exact match, as before).
+
 ## [0.1.6] — 2026-11-07
 
 ### Fixed

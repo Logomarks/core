@@ -1,6 +1,10 @@
 /**
  * Measures of a ring (a list of [x, y] points, closed implicitly) and of a shape: signed area, area, perimeter,
- * bounding box, winding number round a point, and consecutive duplicates dropped.
+ * bounding box, winding number round a point, consecutive duplicates dropped, and a ring opened or closed.
+ *
+ * Rings come both ways: the shape builders (poly, rect, circle, ellipse, rr, roundPoly, …) return them open (no repeated
+ * first point), the booleans (U, D, I, grow, lens, drop, …) closed (the first point repeated at the end). Code that wants
+ * one or the other asks for it with openRing() or closeRing() rather than slicing the last point off blind.
  */
 
 /**
@@ -91,3 +95,26 @@ export const dedupe = (pts) => pts.filter((p, i) => {
 	const q = pts[(i + 1) % pts.length];
 	return Math.hypot(p[0] - q[0], p[1] - q[1]) > 1e-6;
 });
+
+/**
+ * A ring without its closing point: the last point goes only when it lies within `eps` of the first (a sampled full turn
+ * ends near, not exactly on, its start), so an open ring comes back as it is, every corner kept.
+ *
+ * @template {import('./types.js').Point} P
+ * @param {readonly P[]} ring The ring, open or closed.
+ * @param {number} [eps] How near the last point must be to the first to count as its repeat.
+ * @returns {P[]} The ring, open (the input itself when it already was).
+ */
+export const openRing = (ring, eps = 1e-6) =>
+	/** @type {P[]} */ (ring.length > 1 && Math.hypot(ring[0][0] - ring[ring.length - 1][0], ring[0][1] - ring[ring.length - 1][1]) <= eps ? ring.slice(0, -1) : ring);
+
+/**
+ * A ring with its closing point: the first point repeated at the end, unless the last already lies within `eps` of it.
+ *
+ * @template {import('./types.js').Point} P
+ * @param {readonly P[]} ring The ring, open or closed.
+ * @param {number} [eps] How near the last point must be to the first to count as its repeat.
+ * @returns {P[]} The ring, closed (the input itself when it already was).
+ */
+export const closeRing = (ring, eps = 1e-6) =>
+	/** @type {P[]} */ (ring.length && openRing(ring, eps) === ring ? [...ring, ring[0]] : ring);

@@ -1,6 +1,7 @@
 /**
  * Shapes out: SVG path data (Douglas-Peucker simplified, one decimal), the SVG file, and writing it.
  */
+import { openRing } from './polygon.js';
 
 // Douglas-Peucker on each ring, then path string (evenodd)
 export function dp(pts, tol) {
@@ -13,8 +14,10 @@ export function dp(pts, tol) {
     if (md > tol) { keep[mi] = 1; st.push([a, mi], [mi, b]); } }
   return pts.filter((_, i) => keep[i]);
 }
+/** A shape as SVG path data (even-odd): each ring opened (closed or open, every corner kept), split at its farthest point,
+    simplified within `tol` and written to one decimal. */
 export function toPath(mp, tol = 0.12) {
-  return mp.map(pg => pg.map(ring => { let pts = ring.slice(0, -1); let far = 0, fd = -1;
+  return mp.map(pg => pg.map(ring => { let pts = openRing(ring); let far = 0, fd = -1;
     pts.forEach((q, i) => { const d = Math.hypot(q[0] - pts[0][0], q[1] - pts[0][1]); if (d > fd) { fd = d; far = i; } });
     pts = [...dp(pts.slice(0, far + 1), tol).slice(0, -1), ...dp([...pts.slice(far), pts[0]], tol).slice(0, -1)];
     return pts.length < 3 ? '' : 'M' + pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join('L') + 'Z'; }).join('')).join('');

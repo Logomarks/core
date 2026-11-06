@@ -5,7 +5,7 @@
  */
 export { C, GAP, polar, poly, mapPts, rot, move, scale, flipX, sample, closedCurve, polygonPath, TAU, rad } from './core.js';
 export { U, I, robust, robustOps, OPS, D, X } from './booleans.js';
-export { signedArea, area, perimeter, ringBox, bbox, winding, dedupe } from './polygon.js';
+export { signedArea, area, perimeter, ringBox, bbox, winding, dedupe, openRing, closeRing } from './polygon.js';
 export { seeded } from './random.js';
 export { circle, ellipse, rect, regular, annulus, sector, arcBand, rotN, bar, ring, roundPoly, rr, lens, drop, squircle, pill, egg } from './shapes.js';
 export { stroke, weave, offsetPts, fillet, tracks, filletClosed, trackLoop, walk, balloon, linePts, arcPts, joinPts } from './stroke.js';

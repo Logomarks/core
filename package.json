@@ -1,6 +1,6 @@
 {
   "name": "@logomarks/core",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Geometry, SVG reading, fitting, analysis and similarity for logomarks on a 512 grid: the kit the Logomarks set is drawn with (shapes, real booleans, strokes, tracks, iso solids, badges, letter skeletons), one SVG path parser, the 448 fit, speck and shape-tag analysis, outline signatures, and the industry-symbol parts.",
   "type": "module",
   "main": "src/index.js",

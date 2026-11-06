@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { C, U, D, I, X, rect, circle, poly, regular, area, signedArea, perimeter, bbox, ringBox, winding, dedupe, rot, move, seeded, robust, robustOps, toPath, svg, over, grow, stroke, tracks, pill, BADGE, knockout, SKEL, skelSolid, glitchMark, polar } from '../src/geometry/index.js';
+import { C, U, D, I, X, rect, circle, poly, regular, area, signedArea, perimeter, bbox, ringBox, winding, dedupe, rot, move, seeded, robust, robustOps, toPath, svg, over, grow, stroke, tracks, pill, BADGE, knockout, SKEL, skelSolid, glitchMark, polar, openRing, closeRing, deneedle, sample } from '../src/geometry/index.js';
 
 robust(); // the kit's booleans retry on near-coincident edges, as every generator sets up
 
@@ -80,6 +80,49 @@ test('robustOps() gives the same result as the plain booleans when nothing throw
 test('toPath() and svg() write one decimal, even-odd, the 512 canvas', () => {
 	assert.equal(toPath(U(rect(0, 0, 10, 20))), 'M0.0 0.0L10.0 0.0L10.0 20.0L0.0 20.0Z');
 	assert.equal(svg(U(poly([[0, 0], [10, 0], [0, 10]]))), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor"><path fill-rule="evenodd" d="M0.0 0.0L10.0 0.0L0.0 10.0Z"/></svg>\n');
+});
+
+test('openRing() drops the closing point only when it repeats the first', () => {
+	const open = rect(0, 0, 10, 20)[0], closed = [...open, open[0]];
+	assert.equal(openRing(open), open, 'an open ring comes back as it is');
+	assert.equal(openRing(open).length, 4);
+	assert.deepEqual(openRing(closed), open);
+	const near = [...open, [1e-7, -1e-7]];
+	assert.deepEqual(openRing(near), open, 'a last point within eps of the first is its repeat');
+	assert.equal(openRing(near, 0).length, 5, 'eps 0 asks for an exact repeat');
+	assert.equal(openRing([[0, 0], [5, 0], [5, 5], [0, 1e-3]]).length, 4, 'a near point beyond eps is a real corner');
+	const turn = sample((t) => [Math.cos(t), Math.sin(t)], 0, 2 * Math.PI, 12);
+	assert.equal(openRing(turn).length, turn.length - 1, 'a sampled full turn ends near its start');
+	assert.deepEqual(openRing([[3, 4]]), [[3, 4]]);
+	assert.deepEqual(openRing([]), []);
+});
+
+test('closeRing() repeats the first point once', () => {
+	const open = rect(0, 0, 10, 20)[0], closed = closeRing(open);
+	assert.equal(closed.length, 5);
+	assert.deepEqual(closed.at(-1), open[0]);
+	assert.equal(closeRing(closed), closed, 'a closed ring comes back as it is');
+	assert.deepEqual(openRing(closed), open);
+	assert.deepEqual(closeRing([]), []);
+});
+
+test('toPath() keeps every corner of an open ring', () => {
+	const box = 'M0.0 0.0L10.0 0.0L10.0 20.0L0.0 20.0Z';
+	assert.equal(toPath([rect(0, 0, 10, 20)]), box, 'a hand-built open rect keeps its 4 corners');
+	assert.equal(toPath([[closeRing(rect(0, 0, 10, 20)[0])]]), box, 'closed, the same path');
+	assert.equal(toPath([poly([[0, 0], [10, 0], [0, 10]])]), 'M0.0 0.0L10.0 0.0L0.0 10.0Z', 'an open triangle stays a triangle');
+});
+
+test('deneedle() reads open and closed rings alike', () => {
+	// a tip at the origin: the long edge in from (200, 20), the short edge out to (10, 0), about 5.7° apart
+	const ring = [[0, 0], [10, 0], [10, -50], [200, -50], [200, 20]];
+	const fromOpen = deneedle([[ring]]), fromClosed = deneedle([[closeRing(ring)]]);
+	assert.deepEqual(fromOpen, fromClosed);
+	const out = fromOpen[0][0];
+	assert.equal(out.length, 5, 'the tip and the short edge become one point; the ring comes back closed');
+	assert.deepEqual(out.at(-1), out[0]);
+	assert.ok(out.some(([x, y]) => x === 200 && y === 20), 'the open ring keeps its last corner');
+	assert.equal(ring.length, 5, 'the input is left as it was');
 });
 
 test('letter badges and skeletons', () => {

@@ -7,11 +7,11 @@ import { U, D, I } from './booleans.js';
 import { circle, rect, bar } from './shapes.js';
 import { stroke } from './stroke.js';
 import { dp } from './path.js';
-import { dedupe } from './polygon.js';
+import { dedupe, openRing } from './polygon.js';
 
 const polys = (g) => (g.length && typeof g[0][0][0] === 'number' ? [g] : g);
 /** A ring's corner points, simplified (an open copy, split at its farthest point so the simplifier never sees first = last). */
-const ringPts = (r, tol = 0.2) => { const q = r.length > 1 && r[0][0] === r.at(-1)[0] && r[0][1] === r.at(-1)[1] ? r.slice(0, -1) : r; let far = 0, fd = -1;
+const ringPts = (r, tol = 0.2) => { const q = openRing(r, 0); let far = 0, fd = -1;
   q.forEach((p, i) => { const d = Math.hypot(p[0] - q[0][0], p[1] - q[0][1]); if (d > fd) { fd = d; far = i; } });
   return [...dp(q.slice(0, far + 1), tol).slice(0, -1), ...dp([...q.slice(far), q[0]], tol).slice(0, -1)]; };
 /** A true round offset: grows a shape by d (shrinks it when d < 0), every corner rounded. */
