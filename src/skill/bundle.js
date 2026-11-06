@@ -41,8 +41,8 @@ const FIT_HEADER = `#!/usr/bin/env node
 // {{url}} · CC0 · no dependencies
 //
 //   node fit.mjs mark.svg                 fit in place
-//   node fit.mjs in.svg out.svg           fit to a new file
-//   node fit.mjs marks/                   fit every .svg in a folder, in place
+//   node fit.mjs in.svg -o out.svg        fit to another file (in.svg out.svg too, while out.svg doesn't exist)
+//   node fit.mjs a.svg b.svg marks/       fit each file, and every .svg in a folder, in place
 //   node fit.mjs --check mark.svg marks/  only report; exits 1 if anything is off
 //
 // Reads <path d> (with fill-rule), <circle>, <ellipse>, <rect> and <polygon>; nested
@@ -58,16 +58,33 @@ import path from 'node:path';
 const FIT_MAIN = `
 // ---------- command line ----------
 
+const USAGE = \`Usage: node fit.mjs [--check] <file.svg | folder>... [-o out.svg]
+  Fits each file in place (a folder: every .svg in it). -o writes one file's fit to another file;
+  so does a second path that doesn't exist yet (in.svg out.svg). --check only reports.\`;
+
+/** Stops with a message and the usage. */
+const fail = (msg) => { console.error(\`fit.mjs: \${msg}\\n\${USAGE}\`); process.exit(2); };
+
 const args = process.argv.slice(2);
-const checking = args[0] === '--check';
-if (checking) args.shift();
-if (!args.length) {
-	console.log('Usage: node fit.mjs [--check] <file.svg | folder> [out.svg]');
-	process.exit(1);
+if (args.some((a) => a === '--help' || a === '-h')) { console.log(USAGE); process.exit(0); }
+const checking = args.includes('--check');
+let out = null;
+const paths = [];
+for (let i = 0; i < args.length; i++) {
+	if (args[i] === '--check') continue;
+	if (args[i] === '-o' || args[i] === '--out') { out = args[++i] ?? fail(\`\${args[i - 1]} needs a file\`); continue; }
+	if (args[i].startsWith('-')) fail(\`unknown option \${args[i]}\`);
+	paths.push(args[i]);
 }
+if (!paths.length) fail('no file or folder given');
+for (const p of paths) if (!fs.existsSync(p)) {
+	// in.svg out.svg: the second path names the file to write, as -o does
+	if (!checking && !out && paths.length === 2 && p === paths[1] && p.endsWith('.svg')) out = paths.pop();
+	else fail(\`\${p} doesn't exist\`);
+}
+if (out && (checking || paths.length !== 1 || fs.statSync(paths[0]).isDirectory())) fail('-o takes one .svg file to fit, without --check');
 const files = [];
-const out = !checking && args.length === 2 && !fs.statSync(args[0]).isDirectory() && args[1].endsWith('.svg') ? args.pop() : null;
-for (const a of args) {
+for (const a of paths) {
 	if (fs.statSync(a).isDirectory()) for (const f of fs.readdirSync(a)) { if (f.endsWith('.svg')) files.push(path.join(a, f)); }
 	else files.push(a);
 }

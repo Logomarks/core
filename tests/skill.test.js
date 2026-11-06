@@ -37,3 +37,34 @@ test('the bundled fit.mjs needs nothing and fits as fitMark() does', () => {
 	fs.writeFileSync(file, fixture('moonrise'));
 	assert.match(execFileSync('node', [path.join(dir, 'fit.mjs'), '--check', file]).toString(), /^✓ /);
 });
+
+test('the bundled fit.mjs fits several files each in place, and writes to another file only when asked', () => {
+	const fit = path.join(dir, 'fit.mjs');
+	const raws = {
+		a: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10 10h40v20h-40z"/></svg>',
+		b: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="30"/></svg>',
+	};
+	const file = (/** @type {string} */ n) => path.join(dir, `${n}.svg`);
+	const reset = () => Object.entries(raws).forEach(([n, svg]) => fs.writeFileSync(file(n), svg));
+	const read = (/** @type {string} */ n) => fs.readFileSync(file(n), 'utf8');
+	// two existing files: each gets its own mark (it used to write a's fit into b)
+	reset();
+	execFileSync('node', [fit, file('a'), file('b')]);
+	assert.equal(read('a'), fitMark(raws.a).svg);
+	assert.equal(read('b'), fitMark(raws.b).svg);
+	// -o, and a second path that doesn't exist yet, write one file's fit elsewhere and leave it as it was
+	reset();
+	execFileSync('node', [fit, file('a'), '-o', file('b')]);
+	assert.equal(read('b'), fitMark(raws.a).svg);
+	assert.equal(read('a'), raws.a);
+	fs.rmSync(file('c'), { force: true });
+	execFileSync('node', [fit, file('a'), file('c')]);
+	assert.equal(read('c'), fitMark(raws.a).svg);
+	assert.equal(read('a'), raws.a);
+	// --help prints the usage; a bad call exits 2 with a reason
+	assert.match(execFileSync('node', [fit, '--help']).toString(), /^Usage: node fit\.mjs/);
+	const status = (/** @type {string[]} */ a) => { try { execFileSync('node', [fit, ...a], { stdio: 'pipe' }); return 0; } catch (e) { return /** @type {{ status: number }} */ (e).status; } };
+	assert.equal(status(['--nope', file('a')]), 2);
+	assert.equal(status([file('a'), file('b'), '-o', file('c')]), 2);
+	assert.equal(status([path.join(dir, 'missing.svg')]), 2);
+});

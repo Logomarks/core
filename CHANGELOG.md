@@ -5,6 +5,12 @@ All notable changes to `@logomarks/core` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.4] — 2026-11-06
+
+### Fixed
+
+- The generated `fit.mjs` fits several files each in place. Given exactly two files it used to take the second as the output and write the first one's fit into it, so the second mark was lost. A file's fit now goes to another file only with `-o out.svg`, or when the second path doesn't exist yet (`in.svg out.svg`, as before). `--help` prints the usage (it used to crash), and an unknown option, a missing path or `-o` with several inputs exits 2 with the reason.
+
 ## [0.1.3] — 2026-11-06
 
 ### Fixed
