@@ -5,6 +5,23 @@ All notable changes to `@logomarks/core` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.8] — 2026-11-07
+
+### Fixed
+
+- `shapeTags()` measures each tag from the mark's geometry instead of a few corner and midpoint samples, so the tags agree with what the marks look like. Re-tagging the 4,040 Logomarks marks: `round` 248 → 267 (its old test passed iso cubes and hexagons and missed many discs with a cut), `square` 144 → 283, `symmetric` 1,202 → 968, `radial` 460 → 235, `solid` 984 → 3,395 and `light` 446 → 645 (every mark now gets exactly one of the two). The rules, the measures and their known limits are in [docs/tags.md](docs/tags.md).
+  - **round:** about square, the ink reaching its convex hull all round, and the hull running on a circle (found by a robust circle fit) with a compact hull.
+  - **square:** about square, not round, and its silhouette (gaps up to 60 closed, holes filled) filling its box to every corner.
+  - **symmetric:** the left-right mirror only, by coverage and by outline (so a small asymmetric glyph inside a badge breaks it). A top-bottom mirror alone no longer counts.
+  - **radial:** rotational symmetry of order 3, 4 or 5 about the centre of mass. A half turn alone (an S, a bar) no longer counts.
+  - **solid / light:** light when the pieces are strokes with little mass (under 30% of the ink in parts thicker than 48 units or 12% of the short side); solid otherwise. Density no longer decides it.
+  - The raster's default `size` is now 256 (was 128); the thresholds are tuned there.
+
+### Added
+
+- `shapeMeasures(coverage, { w, h, size }, settings?)` and `MEASURE` in `/analyse`: the numbers the tags are decided on (reach, arc, rim, circularity, closed fill and corners, mirror and turn matches, thickness, elongation).
+- `tagsOf(measures, thresholds?)` and `SHAPE`: the tags from the measures, with the thresholds open to change.
+
 ## [0.1.7] — 2026-11-07
 
 ### Fixed

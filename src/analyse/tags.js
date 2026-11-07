@@ -2,47 +2,82 @@
  * @module @logomarks/core/analyse/tags
  *
  * Shape tags measured from a mark's coverage: wide or tall, round or square, solid or light, symmetric, radial.
+ * Tuned on the 4,040 Logomarks marks against contact sheets (about 95% read right by eye; see docs/tags.md).
  */
 
-import { remap, iou } from '../similar/signature.js';
+import { shapeMeasures } from './shape/measures.js';
+
+/** The thresholds the tags are decided by: the Logomarks settings. */
+export const SHAPE = {
+	/** Width over height beyond which a mark is wide, or below which it is tall. */
+	wide: 1.25,
+	tall: 0.8,
+	/** Round and square marks are about as wide as tall: between this and its inverse. */
+	squarish: 0.9,
+	/** Round: the ink reaches the hull all round, and the hull runs on a circle (any one way). */
+	round: {
+		reach: 0.6,
+		ways: [
+			{ arc: 0.74, circularity: 0.89 },
+			{ arc: 0.65, circularity: 0.96 },
+			{ rim: 0.8, circularity: 0.97 },
+		],
+	},
+	/** Square: the closed silhouette fills its box, every corner too (and it isn't round). */
+	square: { fill: 0.88, corners: 0.6 },
+	/** Symmetric: the left-right mirror matches, coverage and outline both. */
+	symmetric: { coverage: 0.95, outline: 0.95 },
+	/** Radial: a turn of order 3, 4 or 5 matches, coverage and outline both. */
+	radial: { coverage: 0.9, outline: 0.9 },
+	/** Light: strokes (drawn-out pieces) with little mass; every other mark is solid. */
+	light: { elongation: 3, thick: 0.3 },
+};
 
 /**
- * A fitted mark's shape tags, from its coverage at `size` px (128) and its outline's size on the 512 canvas.
+ * Whether the measures clear every threshold in `need`.
+ *
+ * @param {import('./shape/measures.js').ShapeMeasures} ms The measures.
+ * @param {Partial<Record<'arc' | 'rim' | 'circularity', number>>} need The thresholds, by measure.
+ * @returns {boolean} All met.
+ */
+const meets = (ms, need) => Object.entries(need).every(([k, v]) => ms[/** @type {'arc' | 'rim' | 'circularity'} */ (k)] >= /** @type {number} */ (v));
+
+/**
+ * The shape tags a mark's measures earn.
+ *
+ * @param {import('./shape/measures.js').ShapeMeasures} ms The measures (`shapeMeasures`).
+ * @param {typeof SHAPE} [t] The thresholds (SHAPE by default).
+ * @returns {import('./tags.js').ShapeTag[]} The tags, in a fixed order; exactly one of solid and light.
+ */
+export function tagsOf(ms, t = SHAPE) {
+	/** @type {import('./tags.js').ShapeTag[]} */
+	const tags = [];
+	if (ms.ratio > t.wide) tags.push('wide'); else if (ms.ratio < t.tall) tags.push('tall');
+	const squarish = ms.ratio > t.squarish && ms.ratio < 1 / t.squarish;
+	if (squarish && ms.reach >= t.round.reach && t.round.ways.some((way) => meets(ms, way))) tags.push('round');
+	else if (squarish && ms.closedFill >= t.square.fill && ms.closedCorners >= t.square.corners) tags.push('square');
+	const light = ms.elongation >= t.light.elongation && Math.min(ms.thick, ms.thickRelative) < t.light.thick;
+	tags.push(light ? 'light' : 'solid');
+	if (ms.mirror.coverage >= t.symmetric.coverage && ms.mirror.outline >= t.symmetric.outline) tags.push('symmetric');
+	if (ms.turns.some((r) => r.coverage >= t.radial.coverage && r.outline >= t.radial.outline)) tags.push('radial');
+	return tags;
+}
+
+/**
+ * A fitted mark's shape tags, from its coverage at `size` px (256) and its outline's size on the 512 canvas.
  * - wide / tall: wider than 1.25 or narrower than 0.8;
- * - round: about square, every corner of its box empty and the silhouette reaching the edge midpoints and diagonals;
- * - square: about square with three corners or more filled;
- * - solid / light: over 62% or under 30% of its box inked;
- * - symmetric: mirrors onto itself (IoU over 0.94); radial: a quarter turn (0.92) or a half turn (0.94) does.
+ * - round: about square (0.9–1.11), the ink reaching its convex hull all round, and the hull running on a circle;
+ * - square: about square, not round, and its silhouette (gaps up to 60 closed, holes filled) filling its box to the
+ *   corners;
+ * - solid / light: light when it's drawn in strokes with little mass (under 30% of the ink in parts thicker than 48
+ *   units, or than 12% of its short side); every other mark is solid;
+ * - symmetric: its left-right mirror matches (coverage and outline 0.95); a top-bottom mirror alone doesn't count;
+ * - radial: a turn by a third, a quarter or a fifth matches (0.9): rotational symmetry of order 3 or more.
  *
  * @param {Float32Array} a Coverage 0–1, `size` × `size`, row by row.
  * @param {{ w: number, h: number, size?: number }} m The outline's width and height (fitted), and the raster's side.
  * @returns {import('./tags.js').ShapeTag[]} The tags, in a fixed order.
  */
-export function shapeTags(a, { w: mw, h: mh, size: N = 128 }) {
-  const tags = new Set();
-  const tf = (/** @type {(x: number, y: number) => number[]} */ f) => remap(a, N, f);
-  // bbox in raster px
-  const s = N / 512, x0 = Math.round((256 - mw / 2) * s), y0 = Math.round((256 - mh / 2) * s), w = Math.round(mw * s), h = Math.round(mh * s);
-  let fill = 0; for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) fill += a[y * N + x] || 0;
-  const density = fill / (w * h);
-  const ratio = mw / mh;
-  if (ratio > 1.25) tags.add('wide'); else if (ratio < 0.8) tags.add('tall');
-  // corners of the bbox: empty everywhere → round silhouette; mostly filled → square
-  const c = Math.max(2, Math.round(Math.min(w, h) * 0.1));
-  const corner = (/** @type {number} */ cx, /** @type {number} */ cy) => { let f = 0; for (let y = cy; y < cy + c; y++) for (let x = cx; x < cx + c; x++) f += a[y * N + x] || 0; return f / (c * c); };
-  const cs = [corner(x0, y0), corner(x0 + w - c, y0), corner(x0, y0 + h - c), corner(x0 + w - c, y0 + h - c)];
-  const sq = ratio > 0.92 && ratio < 1.08;
-  if (sq && cs.every((v) => v < 0.04)) {
-    // also require the silhouette to reach the edge midpoints (a disc, not a diamond or a small blob)
-    const mid = (/** @type {number} */ x, /** @type {number} */ y) => a[y * N + x] > 0.5;
-    const r = Math.round(w / 2), cxp = x0 + r, cyp = y0 + r, d = Math.round(w * 0.06);
-    const diag = Math.round(r * 0.70);
-    if ([mid(cxp, y0 + d), mid(cxp, y0 + h - 1 - d), mid(x0 + d, cyp), mid(x0 + w - 1 - d, cyp)].filter(Boolean).length >= 3 &&
-        [mid(cxp - diag + d, cyp - diag + d), mid(cxp + diag - d, cyp - diag + d), mid(cxp - diag + d, cyp + diag - d), mid(cxp + diag - d, cyp + diag - d)].filter(Boolean).length >= 3) tags.add('round');
-  }
-  if (sq && cs.filter((v) => v > 0.6).length >= 3) tags.add('square');
-  if (density > 0.62) tags.add('solid'); else if (density < 0.3) tags.add('light');
-  if (iou(a, tf((x, y) => [N - 1 - x, y])) > 0.94 || iou(a, tf((x, y) => [x, N - 1 - y])) > 0.94) tags.add('symmetric');
-  if (iou(a, tf((x, y) => [y, N - 1 - x])) > 0.92 || iou(a, tf((x, y) => [N - 1 - x, N - 1 - y])) > 0.94) tags.add('radial');
-  return /** @type {import('./tags.js').ShapeTag[]} */ ([...tags]);
+export function shapeTags(a, m) {
+	return tagsOf(shapeMeasures(a, m));
 }
